@@ -1,9 +1,6 @@
 import re
 import requests
-#from src.utils.utils import headers_as_text
 from tests.conftest import base_url
-from jsonschema import validate
-import json
 
 
 class client(object):
@@ -34,19 +31,19 @@ class client(object):
         return HTTPResponse(response)
 
     @staticmethod
-    def get(path, address=base_url, **kwargs):
+    def get(path='', address=base_url, **kwargs):
         return client.request("GET", address + path, **kwargs)
 
     @staticmethod
-    def post(path, address=base_url, **kwargs):
+    def post(path='', address=base_url, **kwargs):
         return client.request("POST", address + path, **kwargs)
 
     @staticmethod
-    def put(path, address=base_url, **kwargs):
+    def put(path='', address=base_url, **kwargs):
         return client.request("PUT", address + path, **kwargs)
 
     @staticmethod
-    def delete(path, address=base_url, **kwargs):
+    def delete(path='', address=base_url, **kwargs):
         return client.request("DELETE", address + path, **kwargs)
 
 
