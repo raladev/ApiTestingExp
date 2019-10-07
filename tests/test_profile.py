@@ -5,8 +5,8 @@ from src.client import client
 class TestProfile(BaseTest):
 
         def test_get_profile_balances(self, auth_data):
-                response = client.get('/api/profile/balances', address=trading_url, headers=auth_data[0],
-                                      cookies=auth_data[1])
+                response = client.get('/api/profile/balances', address=trading_url, headers=pytest.session['X-Auth-Nonce'],
+                                      cookies=pytest.session['sid'])
                 logging.info(response.headers)
                 logging.info(response.text)
                 response.assert_2xx()
