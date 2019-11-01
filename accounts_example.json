@@ -1,14 +1,14 @@
 {
   "accounts":[
     {
-      "email": "test1@gmail.com",
-      "password": "test1",
-      "desc": "valid email + valid pwd"
+      "login_data":{"email": "test1@gmail.com", "password": "test1"},
+      "desc": "valid email + valid pwd",
+      "scopes": ["all"]
     },
      {
-      "email": "test2@gmail.com",
-      "password": "test2",
-      "desc": "valid email + valid pwd"
+      "login_data":{"email": "test2@gmail.com", "password": "test2"},
+      "desc": "valid email + valid pwd",
+      "scopes": ["test_get_account"]
     }
   ]
 }
