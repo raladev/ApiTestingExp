@@ -19,7 +19,14 @@ class TestAccountPositive():
        logging.info(response.text)
        response.assert_2xx()
 
-    # '\u0000'
+    def test_get_deposit_address(self, session, account, account_currency):
+        response = client.get('/api/account/' + account + '/deposit/' + account_currency + '/address', address=trading_url,
+                              headers={'X-Auth-Nonce': session['nonce']},
+                              cookies=session['cookies'])
+        logging.info(response.headers)
+        logging.info(response.text)
+        response.assert_2xx()
+
     @pytest.mark.parametrize('name',['\r\n',
                                      'null',
                                      '*[]its#20$символов!/',
