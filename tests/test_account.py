@@ -27,6 +27,14 @@ class TestAccountPositive():
         logging.info(response.text)
         response.assert_2xx()
 
+    def test_post_renew_deposit_address(self, session, account, account_currency):
+        response = client.post('/api/account/' + account + '/deposit/' + account_currency + '/renew', address=trading_url,
+                              headers={'X-Auth-Nonce': session['nonce']},
+                              cookies=session['cookies'])
+        logging.info(response.headers)
+        logging.info(response.text)
+        response.assert_2xx()
+
     @pytest.mark.parametrize('name',['\r\n',
                                      'null',
                                      '*[]its#20$символов!/',
