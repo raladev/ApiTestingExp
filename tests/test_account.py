@@ -35,12 +35,53 @@ class TestAccountPositive():
         logging.info(response.text)
         response.assert_2xx()
 
-    @pytest.mark.parametrize('name',['\r\n',
-                                     'null',
-                                     '*[]its#20$символов!/',
-                                     '\u200b',
-                                     '$;--한글']
-                             )
+    def test_get_withdraw_limit(self, session, account):
+        response = client.get('/api/account/'+account +'/withdraw/limit', address=trading_url,
+                              headers={'X-Auth-Nonce': session['nonce']},
+                              cookies=session['cookies'])
+        logging.info(response.headers)
+        logging.info(response.text)
+        response.assert_2xx()
+
+    def test_get_trusted_adress(self, session, account):
+        response = client.get('/api/account/'+account +'/withdraw/trusted-addresses', address=trading_url,
+                              headers={'X-Auth-Nonce': session['nonce']},
+                              cookies=session['cookies'])
+        logging.info(response.headers)
+        logging.info(response.text)
+        response.assert_2xx()
+
+    def test_get_active_transactions(self, session, account):
+       response = client.get('/api/account/' + account + '/active-transactions', address=trading_url, headers={'X-Auth-Nonce': session['nonce']},
+                             cookies=session['cookies'])
+       logging.info(response.headers)
+       logging.info(response.text)
+       response.assert_2xx()
+
+    def test_get_trade_history(self, session, account):
+       response = client.get('/api/account/' + account + '/trade-history', address=trading_url, headers={'X-Auth-Nonce': session['nonce']},
+                             cookies=session['cookies'])
+       logging.info(response.headers)
+       logging.info(response.text)
+       response.assert_2xx()
+
+    def test_get_balance_history(self, session, account):
+       response = client.get('/api/account/' + account + '/balance-history', address=trading_url, headers={'X-Auth-Nonce': session['nonce']},
+                             cookies=session['cookies'])
+       logging.info(response.headers)
+       logging.info(response.text)
+       response.assert_2xx()
+
+    #TODO Need fixture only for margin account
+    @pytest.mark.skip(reason='400 for spot account - correct behavior')
+    def test_get_positions_history(self, session, account):
+       response = client.get('/api/account/' + account + '/positions-history', address=trading_url, headers={'X-Auth-Nonce': session['nonce']},
+                             cookies=session['cookies'])
+       logging.info(response.headers)
+       logging.info(response.text)
+       response.assert_2xx()
+
+    @pytest.mark.parametrize('name',['\r\n', 'null', '*[]its#20$символов!/', '\u200b', '$;--한글'])
     def test_post_info(self, session, account, name):
        data = {
         'name': name
@@ -50,6 +91,15 @@ class TestAccountPositive():
        logging.info(response.headers)
        logging.info(response.text)
        response.assert_2xx()
+
+    def test_get_upcoming_rebates(self, session, account):
+        response = client.get('/api/account/' + account + '/rebates/upcoming', address=trading_url,
+                              headers={'X-Auth-Nonce': session['nonce']},
+                              cookies=session['cookies'])
+        logging.info(response.headers)
+        logging.info(response.text)
+        response.assert_2xx()
+
 
 class TestAccountNegative():
 
