@@ -18,6 +18,7 @@ with open("../accounts.json", "r") as read_file:
         response = requests.post(url=trading_url+'/api/auth/login', json=account['login_data'])
         try:
             jresp = json.loads(response.text)
+            logging.info("Login response" + response.text)
         except:
 
             logging.error('response code is ' + str(response.status_code))
@@ -60,11 +61,11 @@ def pytest_generate_tests(metafunc):
                         else:
                             test_data.append((session, str(acc['id'])))
                 else:
-                    test_data.append((session))
+                    test_data.append(session)
         #TODO update ids generation
         metafunc.parametrize(','.join([i for i in ['session', 'account','account_currency'] if i in metafunc.fixturenames]),
                              test_data,
-                             ids=[i[0]['login_data']['email'] + '_' + i[1] + '_' for i in test_data]
+                            # ids=[i[0]['login_data']['email'] + '_' for i in test_data]
                              )
         return
 

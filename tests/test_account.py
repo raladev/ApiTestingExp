@@ -43,6 +43,18 @@ class TestAccountPositive():
         logging.info(response.text)
         response.assert_2xx()
 
+
+
+    def test_get_withdraw_limit(self, session, account):
+        response = client.post('/api/account/' + account + '/internal-transfer', address=trading_url,
+                                  headers={'X-Auth-Nonce': session['nonce']},
+                                  cookies=session['cookies'])
+        logging.info(response.headers)
+        logging.info(response.text)
+        response.assert_2xx()
+
+
+
     def test_get_trusted_adress(self, session, account):
         response = client.get('/api/account/'+account +'/withdraw/trusted-addresses', address=trading_url,
                               headers={'X-Auth-Nonce': session['nonce']},
@@ -81,10 +93,22 @@ class TestAccountPositive():
        logging.info(response.text)
        response.assert_2xx()
 
-    @pytest.mark.parametrize('name',['\r\n', 'null', '*[]its#20$символов!/', '\u200b', '$;--한글'])
-    def test_post_info(self, session, account, name):
+    # TODO Need fixture only for margin account
+    #@pytest.mark.skip(reason='400 for spot account - correct behavior')
+    def test_get_open_positions(self, session, account):
+           response = client.get('/api/account/' + account + '/open-positions', address=trading_url,
+                                 headers={'X-Auth-Nonce': session['nonce']},
+                                 cookies=session['cookies']
+                                 )
+           logging.info(response.headers)
+           logging.info(response.text)
+           response.assert_2xx()
+
+    @pytest.mark.parametrize('positionAccounting',["Netting"]) #Hedging
+    #@pytest.mark.parametrize('name',['\r\n', 'null', '*[]its#20$символов!/', '\u200b', '$;--한글'])
+    def test_post_info(self, session, account, positionAccounting):
        data = {
-        'name': name
+        'positionAccounting': positionAccounting
        }
        response = client.post('/api/account/' + account + '/info', address=trading_url, json=data, headers={'X-Auth-Nonce': session['nonce']},
                              cookies=session['cookies'])
