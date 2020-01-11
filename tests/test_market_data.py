@@ -1,46 +1,49 @@
-from tests.conftest import *
-from src.client import client
-import logging
+from tests.conftest import logging, trading_url
+import requests
+import pytest
 
-@pytest.mark.parametrize("currency", ["XBTUSD", "ETH/USDT", "BTC/USDT"])
-def test_get_candles(currency):
-    response = client.get(address=trading_url, path='/api/market-data/candles/' + currency + '/1h')
-    logging.info(response.status_code)
-    logging.info(response.text)
-    response.assert_2xx()
 
-@pytest.mark.parametrize("currency", ["XBTUSD", "ETH/USDT", "BTC/USDT"])
-def test_get_dom(currency):
-    response = client.get(address=trading_url, path='/api/market-data/dom/' + currency)
-    logging.info(response.status_code)
-    logging.info(response.text)
-    response.assert_2xx()
+class TestMarketDataPositive:
 
-#trendpower, compare with perpetuals
-def test_get_initials_candles():
-    response = client.get(address=trading_url, path='/api/market-data/initial/candles')
-    logging.info(response.status_code)
-    logging.info(response.text)
-    response.assert_2xx()
+    @pytest.mark.parametrize("currency", ["XBTUSD", "ETH/USDT", "BTC/USDT"])
+    def test_get_candles(self, currency):
+        response = requests.get(f'{trading_url}/api/market-data/candles/{currency}/1h')
+        logging.info(response.status_code)
+        logging.info(response.text)
+        assert response.status_code == 200
 
-def test_get_perpetuals():
-    response = client.get(address=trading_url, path='/api/market-data/perpetuals')
-    logging.info(response.status_code)
-    logging.info(response.text)
-    response.assert_2xx()
+    @pytest.mark.parametrize("currency", ["XBTUSD", "ETH/USDT", "BTC/USDT"])
+    def test_get_dom(self, currency):
+        response = requests.get(f'{trading_url}/api/market-data/dom/{currency}')
+        logging.info(response.status_code)
+        logging.info(response.text)
+        assert response.status_code == 200
 
-#USDETH no trendpower
-def test_get_investments():
-    response = client.get(address=trading_url, path='/api/market-data/investments')
-    logging.info(response.status_code)
-    logging.info(response.text)
-    response.assert_2xx()
+    # trendpower, compare with perpetuals
+    def test_get_initials_candles(self):
+        response = requests.get(f'{trading_url}/api/market-data/initial/candles')
+        logging.info(response.status_code)
+        logging.info(response.text)
+        assert response.status_code == 200
 
-# why indexes is in market watch
-def test_get_market_watch():
-    response = client.get(address=trading_url, path='/api/market-data/market-watch')
-    logging.info(response.status_code)
-    logging.info(response.text)
-    response.assert_2xx()
+    def test_get_perpetuals(self):
+        response = requests.get(f'{trading_url}/api/market-data/perpetuals')
+        logging.info(response.status_code)
+        logging.info(response.text)
+        assert response.status_code == 200
 
-# what is https://trading.xena.exchange/api/market-data/indexes/.BTC3_TWAP/BTC/USDT/1h
+    #USDETH no trendpower
+    def test_get_investments(self):
+        response = requests.get(f'{trading_url}/api/market-data/investments')
+        logging.info(response.status_code)
+        logging.info(response.text)
+        assert response.status_code == 200
+
+    # why indexes is in market watch
+    def test_get_market_watch(self):
+        response = requests.get(f'{trading_url}/api/market-data/market-watch')
+        logging.info(response.status_code)
+        logging.info(response.text)
+        assert response.status_code == 200
+
+    # what is https://trading.xena.exchange/api/market-data/indexes/.BTC3_TWAP/BTC/USDT/1h

@@ -1,6 +1,10 @@
-from tests.conftest import *
-from src.client import client
+from tests.conftest import logging, base_url
+import requests
 
-def test_get_landing():
-        response = client.get(address=base_url)
-        response.assert_2xx()
+
+class TestPagesPositive:
+
+        def test_get_landing(self):
+                response = requests.get(base_url)
+                logging.info(response.text)
+                assert response.status_code == 200
