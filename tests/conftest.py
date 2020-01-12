@@ -29,20 +29,20 @@ def pytest_configure(config):
         try:
             jresp = json.loads(response.text)
             logging.info("Login response" + response.text)
+            sessions.append(
+                {
+                    "login_data": account['login_data'],
+                    "nonce": jresp['nonce'],
+                    "cookies": response.cookies,
+                    "scopes": account['scopes'],
+                    "accounts": jresp['accounts']
+                }
+            )
         except:
-
             logging.error('response code is ' + str(response.status_code))
             logging.error('Cant parse json, incorrect response is ' + response.text + '. Login data is' + str(
                 account['login_data']))
-        sessions.append(
-            {
-                "login_data": account['login_data'],
-                "nonce": jresp['nonce'],
-                "cookies": response.cookies,
-                "scopes": account['scopes'],
-                "accounts": jresp['accounts']
-            }
-        )
+
 
 main_fixtures = ['session', 'account', 'account_currency']
 session_based_fixtures = {'apikey', 'payment', 'cancel_payment'}
