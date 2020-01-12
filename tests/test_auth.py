@@ -1,4 +1,5 @@
-from tests.conftest import logging, trading_url, accounts
+from tests.conftest import logging, accounts
+from cfg import trading_url
 from utils import get_accounts
 import requests
 import pyotp

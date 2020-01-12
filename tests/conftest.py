@@ -1,19 +1,14 @@
 import pytest
 import logging
+import cfg
 import json
 import requests
-import ast
 import time
 from utils import get_accounts
 import pyotp
 import ast
 
-ws_url = 'ws//:trading.xena.exchange/'
-trading_url = 'https://trading.xena.exchange/'
-base_url = 'https://xena.exchange/'
-
 logging.basicConfig(level=logging.INFO)
-
 
 # TODO think about no login if its not required
 with open("../accounts.json", "r") as read_file:
@@ -21,8 +16,16 @@ with open("../accounts.json", "r") as read_file:
     accounts = [i for i in data['accounts']]
     sessions = []
 
+
+def pytest_addoption(parser):
+    parser.addoption("--url", action="store_true", help="Trading url", default="https://trading.xena.exchange")
+
+
+def pytest_configure(config):
+    cfg.trading_url = config.getoption("--url")
+
     for account in accounts:
-        response = requests.post(url=trading_url + '/api/auth/login', json=account['login_data'])
+        response = requests.post(url=cfg.trading_url + '/api/auth/login', json=account['login_data'])
         try:
             jresp = json.loads(response.text)
             logging.info("Login response" + response.text)
@@ -40,10 +43,6 @@ with open("../accounts.json", "r") as read_file:
                 "accounts": jresp['accounts']
             }
         )
-
-# This shit does not work for python 3.7 and pytest >4.0,need to think about global variables, till the repair
-# def pytest_namespace():
-#    return {'session': None}
 
 main_fixtures = ['session', 'account', 'account_currency']
 session_based_fixtures = {'apikey', 'payment', 'cancel_payment'}
@@ -122,7 +121,7 @@ def init_tests():
 @pytest.fixture(scope='function')
 def login(request):
     account = request.param
-    response = requests.post(url=trading_url + '/api/auth/login', json=account['login_data'])
+    response = requests.post(url=cfg.trading_url + '/api/auth/login', json=account['login_data'])
     jresp = json.loads(response.text)
     yield {"login_data": account['login_data'], "nonce": jresp['nonce'],
            "cookies": response.cookies, "accounts": jresp['accounts']}
@@ -130,7 +129,7 @@ def login(request):
 
 @pytest.fixture(scope='function')
 def payment_ratio():
-    response = requests.get(f'{trading_url}/api/common/payment/ratio')
+    response = requests.get(f'{cfg.trading_url}/api/common/payment/ratio')
     jresp = json.loads(response.text)
     yield jresp["paymentSettings"][0]['ratios'][0]['ratio']
 
@@ -145,16 +144,16 @@ def payment(request, payment_ratio):
             "language": "ru",
             "ratio": payment_ratio,
             "account": get_accounts(session, kind='Spot')}
-    requests.post(f'{trading_url}/api/payment/create', headers={'X-Auth-Nonce': session['nonce']},
+    requests.post(f'{cfg.trading_url}/api/payment/create', headers={'X-Auth-Nonce': session['nonce']},
                              json=data, cookies=session['cookies'])
 
     yield "id of payment"
 
-    response = requests.get(f'{trading_url}/api/payment/active-payments', headers={'X-Auth-Nonce': session['nonce']},
+    response = requests.get(f'{cfg.trading_url}/api/payment/active-payments', headers={'X-Auth-Nonce': session['nonce']},
                             cookies=session['cookies'])
 
     if response.text != "[]":
-        requests.post(f'{trading_url}/api/payment/cancel/0',
+        requests.post(f'{cfg.trading_url}/api/payment/cancel/0',
                                  headers={'X-Auth-Nonce': session['nonce']},
                                  cookies=session['cookies'])
 
@@ -163,10 +162,10 @@ def payment(request, payment_ratio):
 def cancel_payment(request):
     yield
     session = request.param
-    response = requests.get(f'{trading_url}/api/payment/active-payments', headers={'X-Auth-Nonce': session['nonce']},
+    response = requests.get(f'{cfg.trading_url}/api/payment/active-payments', headers={'X-Auth-Nonce': session['nonce']},
                             cookies=session['cookies'])
     if response.text != "[]":
-        requests.post(f'{trading_url}/api/payment/cancel/<extracted_id>',
+        requests.post(f'{cfg.trading_url}/api/payment/cancel/<extracted_id>',
                                  headers={'X-Auth-Nonce': session['nonce']},
                                  cookies=session['cookies'])
 
@@ -174,7 +173,7 @@ def cancel_payment(request):
 @pytest.fixture(scope='function')
 def apikey(request):
     session = request.param
-    response = requests.post(f'{trading_url}/api/auth/apikeys/new',
+    response = requests.post(f'{cfg.trading_url}/api/auth/apikeys/new',
                              headers={'X-Auth-Nonce': session['nonce']},
                              cookies=session['cookies'],
                              json={"scopes": ["trading", "transfers"], "accounts": get_accounts(session)})
@@ -182,10 +181,10 @@ def apikey(request):
 
     yield apikey
 
-    response = requests.get(f'{trading_url}/api/auth/apikeys', headers={'X-Auth-Nonce': session['nonce']},
+    response = requests.get(f'{cfg.trading_url}/api/auth/apikeys', headers={'X-Auth-Nonce': session['nonce']},
                             cookies=session['cookies'])
     if response.text.find(apikey['apiKey']) != -1:
-        requests.delete(f'{trading_url}/api/auth/apikeys',
+        requests.delete(f'{cfg.trading_url}/api/auth/apikeys',
                         headers={'X-Auth-Nonce': session['nonce']},
                         cookies=session['cookies'], json={"apiKey": apikey['apiKey']})
 
@@ -194,13 +193,13 @@ def apikey(request):
 def generate2fa(request):
     # Login
     account = request.param
-    response = requests.post(url=trading_url + '/api/auth/login', json=account['login_data'])
+    response = requests.post(url=cfg.trading_url + '/api/auth/login', json=account['login_data'])
     jresp = json.loads(response.text)
     session = {"login_data": account['login_data'], "nonce": jresp['nonce'],
                "cookies": response.cookies, "accounts": jresp['accounts']}
 
     # Generate secret
-    rsp = requests.post(trading_url + '/api/auth/account/' + str(get_accounts(session)[0]) + '/2fa/generate',
+    rsp = requests.post(cfg.trading_url + '/api/auth/account/' + str(get_accounts(session)[0]) + '/2fa/generate',
                         headers={'X-Auth-Nonce': session['nonce']},
                         cookies=session['cookies'])
     otp_secret = ast.literal_eval(rsp.text)['key']
@@ -212,7 +211,7 @@ def generate2fa(request):
     logging.info('Re-login')
     totp = pyotp.TOTP(otp_secret)
     logging.info(totp.now())
-    response = requests.post(url=trading_url + '/api/auth/login', json={"email": account['login_data']['email'],
+    response = requests.post(url=cfg.trading_url + '/api/auth/login', json={"email": account['login_data']['email'],
                                                                         "password": account['login_data']['password'],
                                                                         "passcode": totp.now()})
     jresp = json.loads(response.text)
@@ -228,7 +227,7 @@ def generate2fa(request):
         "authEnabled": False,
         "enabled": False
     }
-    rsp = requests.post(trading_url + '/api/auth/account/' + str(get_accounts(session)[0]) + '/2fa/set',
+    rsp = requests.post(cfg.trading_url + '/api/auth/account/' + str(get_accounts(session)[0]) + '/2fa/set',
                         headers={'X-Auth-Nonce': session['nonce']}, json=data,
                         cookies=session['cookies'])
     logging.info('2fa disabled ' + str(rsp.text) + "_" + str(rsp.status_code))

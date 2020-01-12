@@ -1,4 +1,5 @@
-from tests.conftest import logging, trading_url
+from tests.conftest import logging
+from cfg import trading_url
 import requests
 
 

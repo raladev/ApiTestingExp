@@ -1,4 +1,4 @@
-from tests.conftest import logging, trading_url
+from tests.conftest import logging
 import pytest
 import requests
 
