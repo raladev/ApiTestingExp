@@ -104,9 +104,7 @@ class TestAuthPositive:
         logging.info(response.text)
         assert response.status_code == 200
 
-
     # OAUTH2
-
     # TODO Update oauth section
     @pytest.mark.skip(reason='no parametrize, no clients')
     def test_get_oauth2_auth(self, session):

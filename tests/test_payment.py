@@ -4,6 +4,7 @@ import requests
 import pytest
 
 # TODO Update after kyc passing
+@pytest.mark.skip(reason='unfinished')
 class TestCardPayPositive:
 
     def test_get_active_payments(self, session):
@@ -15,7 +16,6 @@ class TestCardPayPositive:
 
     @pytest.mark.parametrize("base_amount", ["0.00400000"])
     def test_post_create_payment(self, session, payment_ratio, base_amount, cancel_payment):
-
        data = {"quoteAmount": str(round(float(base_amount)*float(payment_ratio), 2)),
                "quoteCurrency": "EUR",
                "baseAmount": base_amount,
@@ -37,7 +37,7 @@ class TestCardPayPositive:
         logging.info(response.text)
         assert response.status_code == 200
 
-    def test_post_set_inective(self, session):
+    def test_post_set_inactive(self, session):
        response = requests.post(f'{trading_url}/api/payment/set-inactive/243941', headers={'X-Auth-Nonce': session['nonce']},
                               cookies=session['cookies'])
        logging.info(response.headers)

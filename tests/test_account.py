@@ -4,6 +4,7 @@ import requests
 from utils import get_accounts
 import time
 
+
 class TestAccountPositive:
 
     def test_get_account(self, session, account):
@@ -54,6 +55,7 @@ class TestAccountPositive:
         logging.info(response.text)
         assert response.status_code == 200
 
+    @pytest.mark.skip(reason='skipped for prod')
     @pytest.mark.parametrize('kind_from, kind_to', [
         ("Spot", "Margin"),
         ("Margin", "Margin"),

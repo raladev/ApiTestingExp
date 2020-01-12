@@ -2,13 +2,18 @@
   "accounts":[
     {
       "login_data":{"email": "test1@gmail.com", "password": "test1"},
-      "desc": "valid email + valid pwd",
+      "desc": "account for all tests",
       "scopes": ["all"]
     },
      {
       "login_data":{"email": "test2@gmail.com", "password": "test2"},
-      "desc": "valid email + valid pwd",
-      "scopes": ["test_get_account"]
+      "desc": "account for tests with session termination, like 2fa and logout",
+      "scopes": ["session_changing"]
+    },
+    {
+      "login_data":{"email": "test3@gmail.com", "password": "test3"},
+      "desc": "account for tests where 2 level of KYC is required",
+      "scopes": ["test_get_active_payments","test_post_create_payment","test_post_cancel","test_post_set_inactive"]
     }
   ]
 }
