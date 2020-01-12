@@ -15,64 +15,64 @@ class TestAccountPositive:
 
     def test_get_balances(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/balances',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_deposit_address(self, session, account, account_currency):
         response = requests.get(f'{trading_url}/api/account/{account}/deposit/{account_currency}/address',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_post_renew_deposit_address(self, session, account, account_currency):
         response = requests.post(f'{trading_url}/api/account/{account}/deposit/{account_currency}/renew',
-                               headers={'X-Auth-Nonce': session['nonce']},
-                               cookies=session['cookies'])
+                                 headers={'X-Auth-Nonce': session['nonce']},
+                                 cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_withdraw_limit(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/withdraw/limit',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_trusted_addresses(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/withdraw/trusted-addresses',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_active_transactions(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/active-transactions',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_trade_history(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/trade-history',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_balance_history(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/balance-history',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
@@ -81,17 +81,17 @@ class TestAccountPositive:
     @pytest.mark.skip(reason='400 for spot account - correct behavior')
     def test_get_positions_history(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/positions-history',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_open_positions(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/open-positions',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies']
-                              )
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies']
+                                )
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
@@ -102,8 +102,8 @@ class TestAccountPositive:
             'positionAccounting': position_accounting
         }
         response = requests.post(f'{trading_url}/api/account/{account}/info', json=data,
-                               headers={'X-Auth-Nonce': session['nonce']},
-                               cookies=session['cookies'])
+                                 headers={'X-Auth-Nonce': session['nonce']},
+                                 cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
@@ -114,16 +114,16 @@ class TestAccountPositive:
             'name': name
         }
         response = requests.post(f'{trading_url}/api/account/{account}/info', json=data,
-                               headers={'X-Auth-Nonce': session['nonce']},
-                               cookies=session['cookies'])
+                                 headers={'X-Auth-Nonce': session['nonce']},
+                                 cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
 
     def test_get_upcoming_rebates(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/rebates/upcoming',
-                              headers={'X-Auth-Nonce': session['nonce']},
-                              cookies=session['cookies'])
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
         logging.info(response.headers)
         logging.info(response.text)
         assert response.status_code == 200
@@ -131,4 +131,3 @@ class TestAccountPositive:
 
 class TestAccountNegative:
     pass
-

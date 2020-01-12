@@ -32,7 +32,7 @@ class TestMarketDataPositive:
         logging.info(response.text)
         assert response.status_code == 200
 
-    #USDETH no trendpower
+    # USDETH no trendpower
     def test_get_investments(self):
         response = requests.get(f'{trading_url}/api/market-data/investments')
         logging.info(response.status_code)
