@@ -134,7 +134,7 @@ def payment_ratio():
     jresp = json.loads(response.text)
     yield jresp["paymentSettings"][0]['ratios'][0]['ratio']
 
-# TODO
+
 @pytest.fixture(scope='function')
 def payment(request, payment_ratio):
     session = request.param
