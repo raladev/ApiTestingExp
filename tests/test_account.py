@@ -1,7 +1,8 @@
 from tests.conftest import logging, trading_url
 import pytest
 import requests
-
+from utils import get_accounts
+import time
 
 class TestAccountPositive:
 
@@ -47,6 +48,28 @@ class TestAccountPositive:
 
     def test_get_trusted_addresses(self, session, account):
         response = requests.get(f'{trading_url}/api/account/{account}/withdraw/trusted-addresses',
+                                headers={'X-Auth-Nonce': session['nonce']},
+                                cookies=session['cookies'])
+        logging.info(response.headers)
+        logging.info(response.text)
+        assert response.status_code == 200
+
+    @pytest.mark.parametrize('kind_from, kind_to', [
+        ("Spot", "Margin"),
+        ("Margin", "Margin"),
+        ("Margin", "Spot")
+    ])
+    def test_post_internal_transfer(self, session, kind_from, kind_to):
+        from_account = get_accounts(session, kind=kind_from)[0]
+        to_account = list(set(get_accounts(session, kind=kind_to)).symmetric_difference([from_account]))[0]
+        data = {
+                "id": str(time.time_ns()),
+                "fromAccount": int(from_account),
+                "toAccount": int(to_account),
+                "amount": "0.00010000",
+                "currency": "BTC"
+                }
+        response = requests.get(f'{trading_url}/api/account/{get_accounts(session)[0]}/internal-transfer',
                                 headers={'X-Auth-Nonce': session['nonce']},
                                 cookies=session['cookies'])
         logging.info(response.headers)

@@ -145,7 +145,7 @@ def payment(request, payment_ratio):
             "language": "ru",
             "ratio": payment_ratio,
             "account": get_accounts(session, kind='Spot')}
-    response = requests.post(f'{trading_url}/api/payment/create', headers={'X-Auth-Nonce': session['nonce']},
+    requests.post(f'{trading_url}/api/payment/create', headers={'X-Auth-Nonce': session['nonce']},
                              json=data, cookies=session['cookies'])
 
     yield "id of payment"
